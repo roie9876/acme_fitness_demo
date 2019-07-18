@@ -39,12 +39,12 @@ spec:
       - name: acmefit-cart-data
         emptyDir: {}
       containers:
-      - image: gcr.io/vmwarecloudadvocacy/acmeshop-cart:1.1.1-beta
+      - image: gcr.io/vmwarecloudadvocacy/cart-wf-test2:1.1
         name: cart
         env:
         - name: REDIS_HOST
           value: 'cart-redis'
-        - name: REDIS_PASS
+        - name: REDIS_PASSWORD
           valueFrom:
             secretKeyRef:
               name: redis-pass
