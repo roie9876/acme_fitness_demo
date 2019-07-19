@@ -20,7 +20,7 @@ spec:
         service: frontend
     spec:
       containers:
-      - image: gcr.io/vmwarecloudadvocacy/acmeshop-front-end:1.1.0-beta
+      - image: gcr.io/vmwarecloudadvocacy/acmeshop-front-end:1.1.1-beta
         name: frontend
         env:
         - name: FRONTEND_PORT
@@ -48,11 +48,11 @@ spec:
         - name: JAEGER_AGENT_HOST
           value: 'localhost'
         - name: JAEGER_AGENT_PORT
-          value: '6831'
+          value: '14268'
         ports:
         - containerPort: 3000
           name: frontend
-      - image: jaegertracing/jaeger-agent:latest
+      - image: jaegertracing/jaeger-agent:1.11.0
         name: jaeger-agent
         ports:
         - containerPort: 5775
