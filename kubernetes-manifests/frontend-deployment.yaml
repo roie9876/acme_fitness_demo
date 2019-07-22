@@ -42,17 +42,17 @@ spec:
         - name: ORDER_PORT
           value: '6000'
         - name: TRACER_HOST
-          value: 'localhost'
+          value: '0.0.0.0'
         - name: TRACER_PORT
           value: '14268'
         - name: JAEGER_AGENT_HOST
-          value: 'localhost'
+          value: '0.0.0.0'
         - name: JAEGER_AGENT_PORT
-          value: '14268'
+          value: '6832'
         ports:
         - containerPort: 3000
           name: frontend
-      - image: jaegertracing/jaeger-agent:1.11.0
+      - image: jaegertracing/jaeger-agent:1.11
         name: jaeger-agent
         ports:
         - containerPort: 5775
