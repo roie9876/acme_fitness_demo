@@ -21,7 +21,6 @@ metadata:
   labels:
     app: cart-redis
     service: cart-redis
-    version: 1.0.0
 spec:
   selector:
     matchLabels:
@@ -76,7 +75,7 @@ kind: Service
 metadata:
   name: cart
   labels:
-    app: cart-total
+    app: cart
     service: cart
 spec:
   ports:
@@ -84,7 +83,7 @@ spec:
       protocol: TCP
       port: 5000
   selector:
-    app: cart-total
+    app: cart
     service: cart
 ---
 apiVersion: apps/v1
@@ -92,12 +91,12 @@ kind: Deployment
 metadata:
   name: cart
   labels:
-    app: cart-total
+    app: cart
     service: cart
 spec:
   selector:
     matchLabels:
-      app: cart-total
+      app: cart
       service: cart
   strategy:
     type: Recreate
@@ -105,7 +104,7 @@ spec:
   template:
     metadata:
       labels:
-        app: cart-total
+        app: cart
         service: cart
     spec:
       volumes:
@@ -246,7 +245,7 @@ kind: Deployment
 metadata:
   name: catalog
   labels:
-    app: catalog-total
+    app: catalog
     service: catalog
     version: v1
 spec:
@@ -310,7 +309,8 @@ spec:
   ports:
     - name: http-frontend
       protocol: TCP
-      port: 3000
+      port: 80
+      targetPort: 3000
   selector:
     app: frontend
     service: frontend
@@ -333,11 +333,11 @@ spec:
   template:
     metadata:
       labels:
-        app: frontend-total
+        app: frontend
         service: frontend
     spec:
       containers:
-      - image: gcr.io/vmwarecloudadvocacy/acmeshop-front-end:1.0.0
+      - image: gcr.io/vmwarecloudadvocacy/acmeshop-front-end:1.2.0
         name: frontend
         env:
         - name: FRONTEND_PORT
@@ -635,7 +635,7 @@ kind: Service
 metadata:
   name: users
   labels:
-    app: users-total
+    app: users
     service: users
 spec:
   ports:
@@ -643,7 +643,7 @@ spec:
       protocol: TCP
       port: 8081
   selector:
-    app: users-total
+    app: users
     service: users
 ---
 apiVersion: apps/v1
@@ -651,12 +651,12 @@ kind: Deployment
 metadata:
   name: users
   labels:
-    app: users-total
+    app: users
     service: users
 spec:
   selector:
     matchLabels:
-      app: users-total
+      app: users
       service: users
   strategy:
     type: Recreate
@@ -664,7 +664,7 @@ spec:
   template:
     metadata:
       labels:
-        app: users-total
+        app: users
         service: users
     spec:
       volumes:
@@ -693,6 +693,66 @@ spec:
         volumeMounts:
         - mountPath: "/data"
           name: "users-data"
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalog-v2
+  labels:
+    app: catalog
+    service: catalog
+    version: v2
+spec:
+  selector:
+    matchLabels:
+      app: catalog
+      service: catalog
+      version: v2
+  strategy:
+    type: Recreate
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: catalog
+        service: catalog
+        version: v2
+    spec:
+      volumes:
+      - name: acmefit-catalog-data
+        emptyDir: {}
+      containers:
+      - image: gcr.io/vmwarecloudadvocacy/acmeshop-catalog:1.2.0
+        name: catalog
+        env:
+        - name: CATALOG_DB_HOST
+          value: 'catalog-mongo'
+        - name: CATALOG_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: catalog-mongo-pass
+              key: password
+        - name: CATALOG_DB_PORT
+          value: '27017'
+        - name: CATALOG_DB_USERNAME
+          value: 'mongoadmin'
+        - name: CATALOG_PORT
+          value: '8082'
+        - name: CATALOG_VERSION
+          value: 'v2'
+        ports:
+        - containerPort: 8082
+          name: catalog
+        volumeMounts:
+        - mountPath: "/data"
+          name: "acmefit-catalog-data"
         resources:
           requests:
             memory: "64Mi"
