@@ -706,13 +706,13 @@ kind: Deployment
 metadata:
   name: catalog-v2
   labels:
-    app: catalog-v2
+    app: catalog
     service: catalog
     version: v2
 spec:
   selector:
     matchLabels:
-      app: catalog-v2
+      app: catalog
       service: catalog
       version: v2
   strategy:
@@ -721,7 +721,7 @@ spec:
   template:
     metadata:
       labels:
-        app: catalog-v2
+        app: catalog
         service: catalog
         version: v2
     spec:
