@@ -164,9 +164,14 @@ metadata:
     service: catalog-mongo
 spec:
   ports:
+    - port: 80
+      name: http-sync
+      protocol: TCP
+      targetPort: 80
     - port: 27017
       name: mongo-catalog
       protocol: TCP
+      targetPort: 27017
   selector:
     app: catalog-mongo
     service: catalog-mongo
@@ -193,8 +198,6 @@ spec:
       containers:
         - name: catalog-mongo
           image: mongo:4
-          resources:
-            {}
           ports:
             - name: mongo-catalog
               containerPort: 27017
@@ -214,6 +217,18 @@ spec:
               name: mongodata
             - mountPath: /docker-entrypoint-initdb.d
               name: mongo-initdb
+        - name: sleep
+          image: pstauffer/curl
+          command: ["/bin/sleep", "3650d"]
+          imagePullPolicy: IfNotPresent
+        - name: http
+          image: docker.io/kennethreitz/httpbin
+          imagePullPolicy: IfNotPresent
+          name: httpbin
+          ports:
+            - name: http-sync
+              containerPort: 80
+              protocol: "TCP"
       volumes:
         - name: mongodata
           emptyDir: {}
