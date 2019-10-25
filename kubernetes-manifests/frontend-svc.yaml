@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: frontend-total
+    service: frontend
+  name: frontend
+  namespace: acme
+spec:
+  ports:
+  - name: http-frontend
+    nodePort: 30807
+    port: 3000
+    protocol: TCP
+    targetPort: 3000
+  selector:
+    app: frontend-total
+    service: frontend
+  type: LoadBalancer
+  loadBalancerIP: 10.15.100.100

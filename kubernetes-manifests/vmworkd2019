@@ -1,0 +1,20 @@
+#!/bin/bash
+
+########################
+# include the magic
+########################
+. demo-magic.sh
+
+# hide the evidence
+clear
+pe "kubectl get node"
+pe "kubectl get ns"
+pe "kubectl get pod -n nsx-system"
+pe "cat acme-no-nat.yaml"
+pe "kubectl create -f acme-no-nat.yaml"
+pe "kubectl config set-context --current --namespace=acme"
+pe "kubectl create -f acme_fitness.yaml"
+pe "watch kubectl get pod"
+pe "cat frontend-svc.yaml"
+pe "kubectl create -f frontend-svc.yaml"
+pe "kubectl get svc"
